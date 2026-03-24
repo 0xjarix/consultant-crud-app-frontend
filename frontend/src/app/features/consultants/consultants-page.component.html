@@ -1,0 +1,115 @@
+<main class="consultants-shell">
+  <section class="hero card">
+    <div class="hero-copy">
+      <p class="eyebrow">Consultant CRM</p>
+      <h1>Consultant Directory</h1>
+      <p class="hero-subtitle">
+        Create, edit, and manage consultant records from one clean dashboard.
+      </p>
+    </div>
+
+    <button
+      class="btn btn-primary"
+      type="button"
+      [disabled]="loading() || saving() || deleting()"
+      (click)="openCreatePanel()">
+      {{ loading() || saving() || deleting() ? 'Please wait...' : 'Add consultant' }}
+    </button>
+  </section>
+
+  <section class="card list-card">
+    <header class="list-header">
+      <h2>All consultants</h2>
+      <span class="list-count">{{ consultants().length }} total</span>
+    </header>
+
+    <div *ngIf="loading()" class="loading-state">
+      <div class="loading-dot" aria-hidden="true"></div>
+      <p>Loading consultants...</p>
+    </div>
+
+    <div *ngIf="!loading() && consultants().length === 0" class="empty-state">
+      <h3>No consultants yet</h3>
+      <p>Start by adding your first consultant profile.</p>
+      <button
+        class="btn btn-primary"
+        type="button"
+        [disabled]="loading() || saving() || deleting()"
+        (click)="openCreatePanel()">
+        {{ loading() || saving() || deleting() ? 'Please wait...' : 'Create first consultant' }}
+      </button>
+    </div>
+
+    <div *ngIf="!loading() && consultants().length > 0" class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>Consultant</th>
+          <th>Expertise</th>
+          <th>Age</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let consultant of consultants(); trackBy: trackByConsultantId">
+          <td data-label="Consultant">
+            <p class="name">{{ consultant.firstName }} {{ consultant.lastName }}</p>
+            <p class="meta">{{ consultant.email }}</p>
+          </td>
+          <td data-label="Expertise">{{ consultant.expertise }}</td>
+          <td data-label="Age">{{ consultant.age }}</td>
+          <td data-label="Actions">
+            <div class="row-actions">
+              <button
+                class="btn btn-sm btn-ghost"
+                type="button"
+                [disabled]="loading() || saving() || deleting()"
+                (click)="openEditPanel(consultant)">
+                Edit
+              </button>
+              <button
+                class="btn btn-sm btn-danger-outline"
+                type="button"
+                [disabled]="loading() || saving() || deleting()"
+                (click)="openDeleteDialog(consultant)">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div class="snackbar-stack" aria-live="polite" aria-atomic="true">
+  <section *ngIf="pageError()" class="snackbar snackbar-error">
+    {{ pageError() }}
+  </section>
+
+  <section *ngIf="pageNotice()" class="snackbar snackbar-success">
+    {{ pageNotice() }}
+  </section>
+</div>
+
+<app-consultant-form-panel
+  [visible]="panelVisible()"
+  [mode]="panelMode()"
+  [consultant]="activeConsultant()"
+  [saving]="saving()"
+  [serverMessage]="formServerMessage()"
+  [serverFieldErrors]="formServerFieldErrors()"
+  (closeRequested)="closePanel()"
+  (submitted)="submitForm($event)">
+</app-consultant-form-panel>
+
+<app-delete-confirm-dialog
+  [visible]="!!deleteTarget()"
+  [deleting]="deleting()"
+  [errorMessage]="deleteError()"
+  [targetName]="deleteTarget() ? deleteTarget()!.firstName + ' ' + deleteTarget()!.lastName : ''"
+  (cancelRequested)="closeDeleteDialog()"
+  (deleteConfirmed)="confirmDelete()">
+</app-delete-confirm-dialog>

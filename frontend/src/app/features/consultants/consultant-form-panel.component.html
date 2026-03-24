@@ -1,0 +1,98 @@
+<div *ngIf="visible" class="panel-overlay" (click)="onBackdropClick($event)">
+  <aside class="panel" role="dialog" aria-modal="true" aria-labelledby="consultant-panel-title">
+    <header class="panel-header">
+      <div>
+        <p class="eyebrow">{{ mode === 'create' ? 'New consultant' : 'Edit consultant' }}</p>
+        <h2 id="consultant-panel-title">
+          {{ mode === 'create' ? 'Create Consultant' : 'Update Consultant' }}
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        class="close-btn"
+        aria-label="Close form panel"
+        [disabled]="saving"
+        (click)="close()">
+        ×
+      </button>
+    </header>
+
+    <form [formGroup]="form" novalidate (ngSubmit)="submit()">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="firstName">First name</label>
+          <input
+            id="firstName"
+            class="input"
+            type="text"
+            formControlName="firstName"
+            (input)="clearFieldServerError('firstName')"
+            autocomplete="given-name">
+          <p *ngIf="getFieldError('firstName') as error" class="field-error">{{ error }}</p>
+        </div>
+
+        <div class="form-field">
+          <label for="lastName">Last name</label>
+          <input
+            id="lastName"
+            class="input"
+            type="text"
+            formControlName="lastName"
+            (input)="clearFieldServerError('lastName')"
+            autocomplete="family-name">
+          <p *ngIf="getFieldError('lastName') as error" class="field-error">{{ error }}</p>
+        </div>
+
+        <div class="form-field field-full">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            class="input"
+            type="email"
+            formControlName="email"
+            (input)="clearFieldServerError('email')"
+            autocomplete="email">
+          <p *ngIf="getFieldError('email') as error" class="field-error">{{ error }}</p>
+        </div>
+
+        <div class="form-field">
+          <label for="expertise">Expertise</label>
+          <input
+            id="expertise"
+            class="input"
+            type="text"
+            formControlName="expertise"
+            (input)="clearFieldServerError('expertise')"
+            autocomplete="organization-title">
+          <p *ngIf="getFieldError('expertise') as error" class="field-error">{{ error }}</p>
+        </div>
+
+        <div class="form-field">
+          <label for="age">Age</label>
+          <input
+            id="age"
+            class="input"
+            type="number"
+            min="18"
+            formControlName="age"
+            (input)="clearFieldServerError('age')"
+            autocomplete="off">
+          <p *ngIf="getFieldError('age') as error" class="field-error">{{ error }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="serverMessage" class="alert alert-danger">{{ serverMessage }}</div>
+
+      <footer class="panel-actions">
+        <button type="button" class="btn btn-ghost" [disabled]="saving" (click)="close()">
+          Cancel
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="saving">
+          {{ saving ? 'Saving...' : mode === 'create' ? 'Create consultant' : 'Save changes' }}
+        </button>
+      </footer>
+    </form>
+  </aside>
+</div>

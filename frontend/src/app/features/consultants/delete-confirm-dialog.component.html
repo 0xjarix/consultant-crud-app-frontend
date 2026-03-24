@@ -1,0 +1,23 @@
+<div *ngIf="visible" class="dialog-overlay" (click)="onBackdropClick($event)">
+  <section class="dialog card" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <h3 id="delete-title">Delete consultant?</h3>
+
+    <p>
+      This will permanently remove
+      <strong>{{ targetName }}</strong>
+      from the directory.
+    </p>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <footer class="dialog-actions">
+      <button type="button" class="btn btn-ghost" [disabled]="deleting" (click)="requestCancel()">
+        Cancel
+      </button>
+
+      <button type="button" class="btn btn-danger" [disabled]="deleting" (click)="requestDelete()">
+        {{ deleting ? 'Deleting...' : 'Delete consultant' }}
+      </button>
+    </footer>
+  </section>
+</div>

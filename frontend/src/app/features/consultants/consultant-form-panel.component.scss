@@ -1,0 +1,132 @@
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(13, 28, 52, 0.44);
+  backdrop-filter: blur(2px);
+  animation: fade-in 0.2s ease;
+}
+
+.panel {
+  width: min(460px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  border-left: 1px solid #d6e3f7;
+  background: #ffffff;
+  box-shadow: var(--shadow-strong);
+  padding: 1.25rem;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+  animation: slide-in 0.24s ease;
+}
+
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 0.34rem;
+}
+
+.close-btn {
+  border: 1px solid var(--border);
+  background: #f7faff;
+  color: var(--text-muted);
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  line-height: 1;
+  font-size: 1.2rem;
+}
+
+.close-btn:hover:enabled {
+  background: #edf4ff;
+}
+
+form {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.95rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.panel-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid #ebf1fb;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(34px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .panel {
+    width: min(100%, 520px);
+  }
+}
+
+@media (max-width: 520px) {
+  .panel {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field-full {
+    grid-column: auto;
+  }
+
+  .panel-actions {
+    flex-direction: column-reverse;
+  }
+
+  .panel-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -1,0 +1,238 @@
+:root {
+  --font-body: 'Public Sans', 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', 'Trebuchet MS', sans-serif;
+
+  --bg-main: #eef3ff;
+  --bg-accent: #f7fbff;
+  --surface: #ffffff;
+  --surface-soft: #f8fbff;
+
+  --text-strong: #14213d;
+  --text-muted: #5c6782;
+
+  --primary: #0b8f82;
+  --primary-dark: #07695f;
+  --primary-soft: #ddf4f1;
+
+  --danger: #b7384f;
+  --danger-soft: #ffedf1;
+
+  --success: #107455;
+  --success-soft: #e3f9ef;
+
+  --border: #d8e2f1;
+
+  --shadow-soft: 0 14px 32px rgba(15, 36, 73, 0.08);
+  --shadow-strong: 0 24px 48px rgba(15, 36, 73, 0.14);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  color: var(--text-strong);
+  background:
+    radial-gradient(circle at 12% 12%, #d5e6ff 0%, rgba(213, 230, 255, 0) 30%),
+    radial-gradient(circle at 88% 0%, #d7fff5 0%, rgba(215, 255, 245, 0) 35%),
+    linear-gradient(180deg, var(--bg-main), var(--bg-accent));
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  border-radius: 999px;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+body::before {
+  width: 260px;
+  height: 260px;
+  left: -120px;
+  bottom: 10%;
+  background: #cae7ff;
+}
+
+body::after {
+  width: 220px;
+  height: 220px;
+  right: -90px;
+  top: 18%;
+  background: #c8f6ee;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+label {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+app-root {
+  position: relative;
+  z-index: 1;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow-soft);
+}
+
+.alert {
+  width: 100%;
+  padding: 0.82rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 0.94rem;
+  line-height: 1.4;
+}
+
+.alert-danger {
+  color: #8a1f34;
+  background: var(--danger-soft);
+  border-color: #f8ccd7;
+}
+
+.alert-success {
+  color: #0c5f45;
+  background: var(--success-soft);
+  border-color: #bdeace;
+}
+
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.68rem 1.15rem;
+  font-weight: 600;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.btn:hover:enabled {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.btn-primary {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: 0 10px 18px rgba(6, 119, 106, 0.24);
+}
+
+.btn-primary:hover:enabled {
+  box-shadow: 0 14px 24px rgba(6, 119, 106, 0.28);
+}
+
+.btn-ghost {
+  color: var(--text-strong);
+  background: #f1f5fc;
+}
+
+.btn-ghost:hover:enabled {
+  background: #e5edf9;
+}
+
+.btn-danger-outline {
+  color: var(--danger);
+  background: transparent;
+  border: 1px solid #f2c2cc;
+}
+
+.btn-danger-outline:hover:enabled {
+  background: var(--danger-soft);
+}
+
+.btn-danger {
+  color: #ffffff;
+  background: linear-gradient(135deg, #cd4660, #b42a47);
+}
+
+.btn-sm {
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.input,
+.select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  padding: 0.7rem 0.8rem;
+  color: var(--text-strong);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: #8cb2ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(140, 178, 255, 0.2);
+}
+
+.field-error {
+  font-size: 0.82rem;
+  color: #9f233d;
+}
+
+@media (max-width: 640px) {
+  .btn {
+    min-height: 2.6rem;
+    padding: 0.66rem 1rem;
+  }
+
+  .btn-sm {
+    min-height: 2.2rem;
+    padding: 0.45rem 0.72rem;
+  }
+}
