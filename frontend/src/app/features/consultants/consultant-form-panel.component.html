@@ -27,6 +27,7 @@
             class="input"
             type="text"
             formControlName="firstName"
+            required
             (input)="clearFieldServerError('firstName')"
             autocomplete="given-name">
           <p *ngIf="getFieldError('firstName') as error" class="field-error">{{ error }}</p>
@@ -39,6 +40,7 @@
             class="input"
             type="text"
             formControlName="lastName"
+            required
             (input)="clearFieldServerError('lastName')"
             autocomplete="family-name">
           <p *ngIf="getFieldError('lastName') as error" class="field-error">{{ error }}</p>
@@ -51,6 +53,7 @@
             class="input"
             type="email"
             formControlName="email"
+            required
             (input)="clearFieldServerError('email')"
             autocomplete="email">
           <p *ngIf="getFieldError('email') as error" class="field-error">{{ error }}</p>
@@ -63,6 +66,7 @@
             class="input"
             type="text"
             formControlName="expertise"
+            required
             (input)="clearFieldServerError('expertise')"
             autocomplete="organization-title">
           <p *ngIf="getFieldError('expertise') as error" class="field-error">{{ error }}</p>
@@ -75,6 +79,8 @@
             class="input"
             type="number"
             min="18"
+            step="1"
+            required
             formControlName="age"
             (input)="clearFieldServerError('age')"
             autocomplete="off">

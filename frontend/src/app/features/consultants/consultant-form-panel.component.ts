@@ -1,12 +1,42 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import { Consultant, CreateConsultantRequest } from '../../core/models/consultant.model';
 
 type PanelMode = 'create' | 'edit';
 
 type ConsultantFormField = keyof CreateConsultantRequest;
+
+const nonBlankValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value = control.value;
+
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  return value.trim().length > 0 ? null : { blank: true };
+};
+
+const adultAgeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value = control.value;
+
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+
+  const parsedValue = Number(value);
+
+  if (!Number.isInteger(parsedValue)) {
+    return { integer: true };
+  }
+
+  if (parsedValue < 18) {
+    return { min: true };
+  }
+
+  return null;
+};
 
 @Component({
   selector: 'app-consultant-form-panel',
@@ -28,11 +58,11 @@ export class ConsultantFormPanelComponent implements OnChanges {
   @Output() submitted = new EventEmitter<CreateConsultantRequest>();
 
   readonly form = this.fb.nonNullable.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
+    firstName: ['', [Validators.required, nonBlankValidator]],
+    lastName: ['', [Validators.required, nonBlankValidator]],
     email: ['', [Validators.required, Validators.email]],
-    expertise: ['', Validators.required],
-    age: [18, [Validators.required, Validators.min(18)]]
+    expertise: ['', [Validators.required, nonBlankValidator]],
+    age: [18, [Validators.required, adultAgeValidator]]
   });
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -106,8 +136,16 @@ export class ConsultantFormPanelComponent implements OnChanges {
       return 'This field is required.';
     }
 
+    if (control.hasError('blank')) {
+      return 'This field cannot be blank.';
+    }
+
     if (control.hasError('email')) {
       return 'Please enter a valid email address.';
+    }
+
+    if (control.hasError('integer')) {
+      return 'Age must be a whole number.';
     }
 
     if (control.hasError('min')) {

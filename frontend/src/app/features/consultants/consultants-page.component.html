@@ -11,9 +11,9 @@
     <button
       class="btn btn-primary"
       type="button"
-      [disabled]="loading() || saving() || deleting()"
+      [disabled]="saving() || deleting()"
       (click)="openCreatePanel()">
-      {{ loading() || saving() || deleting() ? 'Please wait...' : 'Add consultant' }}
+      {{ saving() || deleting() ? 'Please wait...' : 'Add consultant' }}
     </button>
   </section>
 
@@ -23,24 +23,59 @@
       <span class="list-count">{{ consultants().length }} total</span>
     </header>
 
-    <div *ngIf="loading()" class="loading-state">
+    <div class="list-tools">
+      <label class="search-wrap" for="consultant-search">
+        <span class="search-label">Search</span>
+        <input
+          id="consultant-search"
+          class="input search-input"
+          type="search"
+          placeholder="Name, email, or expertise"
+          [value]="searchQuery()"
+          [disabled]="saving() || deleting()"
+          (input)="onSearchInput($event)">
+      </label>
+
+      <span *ngIf="loading() && hasLoadedOnce()" class="searching-indicator">Searching...</span>
+
+      <button
+        *ngIf="searchQuery().trim().length > 0"
+        class="btn btn-sm btn-ghost"
+        type="button"
+        [disabled]="saving() || deleting()"
+        (click)="clearSearch()">
+        Clear
+      </button>
+    </div>
+
+    <div *ngIf="loading() && !hasLoadedOnce()" class="loading-state">
       <div class="loading-dot" aria-hidden="true"></div>
       <p>Loading consultants...</p>
     </div>
 
-    <div *ngIf="!loading() && consultants().length === 0" class="empty-state">
-      <h3>No consultants yet</h3>
-      <p>Start by adding your first consultant profile.</p>
+    <div *ngIf="hasLoadedOnce() && !loading() && consultants().length === 0" class="empty-state">
+      <h3>{{ searchQuery().trim().length > 0 ? 'No matching consultants' : 'No consultants yet' }}</h3>
+      <p>{{ searchQuery().trim().length > 0 ? 'Try a different search term.' : 'Start by adding your first consultant profile.' }}</p>
       <button
+        *ngIf="searchQuery().trim().length === 0"
         class="btn btn-primary"
         type="button"
-        [disabled]="loading() || saving() || deleting()"
+        [disabled]="saving() || deleting()"
         (click)="openCreatePanel()">
-        {{ loading() || saving() || deleting() ? 'Please wait...' : 'Create first consultant' }}
+        {{ saving() || deleting() ? 'Please wait...' : 'Create first consultant' }}
+      </button>
+
+      <button
+        *ngIf="searchQuery().trim().length > 0"
+        class="btn btn-ghost"
+        type="button"
+        [disabled]="saving() || deleting()"
+        (click)="clearSearch()">
+        Clear search
       </button>
     </div>
 
-    <div *ngIf="!loading() && consultants().length > 0" class="table-wrap">
+    <div *ngIf="consultants().length > 0" class="table-wrap">
       <table>
         <thead>
         <tr>
@@ -64,14 +99,14 @@
               <button
                 class="btn btn-sm btn-ghost"
                 type="button"
-                [disabled]="loading() || saving() || deleting()"
+                [disabled]="saving() || deleting()"
                 (click)="openEditPanel(consultant)">
                 Edit
               </button>
               <button
                 class="btn btn-sm btn-danger-outline"
                 type="button"
-                [disabled]="loading() || saving() || deleting()"
+                [disabled]="saving() || deleting()"
                 (click)="openDeleteDialog(consultant)">
                 Delete
               </button>

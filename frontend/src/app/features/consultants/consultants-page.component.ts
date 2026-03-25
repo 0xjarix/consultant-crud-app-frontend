@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 
 import { normalizeApiError } from '../../core/api/api-error';
@@ -16,7 +16,7 @@ type PanelMode = 'create' | 'edit';
   templateUrl: './consultants-page.component.html',
   styleUrl: './consultants-page.component.scss'
 })
-export class ConsultantsPageComponent implements OnInit {
+export class ConsultantsPageComponent implements OnInit, OnDestroy {
   private readonly api = inject(ConsultantApiService);
 
   readonly consultants = signal<Consultant[]>([]);
@@ -24,6 +24,7 @@ export class ConsultantsPageComponent implements OnInit {
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly deleting = signal(false);
+  readonly hasLoadedOnce = signal(false);
 
   readonly pageError = signal<string | null>(null);
   readonly pageNotice = signal<string | null>(null);
@@ -37,9 +38,16 @@ export class ConsultantsPageComponent implements OnInit {
 
   readonly deleteTarget = signal<Consultant | null>(null);
   readonly deleteError = signal<string | null>(null);
+  readonly searchQuery = signal('');
+
+  private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
     this.fetchConsultants();
+  }
+
+  ngOnDestroy(): void {
+    this.clearSearchDebounceTimer();
   }
 
   @HostListener('document:keydown.escape')
@@ -56,6 +64,26 @@ export class ConsultantsPageComponent implements OnInit {
 
   trackByConsultantId(index: number, consultant: Consultant): number {
     return consultant.id;
+  }
+
+  onSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchQuery.set(target.value);
+
+    this.clearSearchDebounceTimer();
+    this.searchDebounceTimer = setTimeout(() => {
+      this.fetchConsultants();
+    }, 300);
+  }
+
+  clearSearch(): void {
+    if (this.searchQuery().trim().length === 0) {
+      return;
+    }
+
+    this.clearSearchDebounceTimer();
+    this.searchQuery.set('');
+    this.fetchConsultants();
   }
 
   openCreatePanel(): void {
@@ -166,15 +194,18 @@ export class ConsultantsPageComponent implements OnInit {
   private fetchConsultants(): void {
     this.loading.set(true);
     this.pageError.set(null);
+    const searchTerm = this.searchQuery().trim();
 
     this.api
-      .getAll()
+      .getAll(searchTerm)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (consultants) => {
+          this.hasLoadedOnce.set(true);
           this.consultants.set(consultants);
         },
         error: (error: unknown) => {
+          this.hasLoadedOnce.set(true);
           this.pageError.set(normalizeApiError(error).message);
         }
       });
@@ -188,5 +219,12 @@ export class ConsultantsPageComponent implements OnInit {
         this.pageNotice.set(null);
       }
     }, 3500);
+  }
+
+  private clearSearchDebounceTimer(): void {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+      this.searchDebounceTimer = null;
+    }
   }
 }

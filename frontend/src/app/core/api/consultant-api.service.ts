@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -13,8 +13,15 @@ export class ConsultantApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = '/api/consultants';
 
-  getAll(): Observable<Consultant[]> {
-    return this.http.get<Consultant[]>(this.baseUrl);
+  getAll(search?: string): Observable<Consultant[]> {
+    const normalizedSearch = search?.trim();
+
+    const params =
+      normalizedSearch && normalizedSearch.length > 0
+        ? new HttpParams().set('search', normalizedSearch)
+        : undefined;
+
+    return this.http.get<Consultant[]>(this.baseUrl, { params });
   }
 
   create(payload: CreateConsultantRequest): Observable<Consultant> {
